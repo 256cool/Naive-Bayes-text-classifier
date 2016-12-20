@@ -3,6 +3,7 @@ import java.util.*;
 import java.io.*;
 import java.math.BigDecimal;
 
+//Below enum type is not used in code, its just given for the understanding of reader that below can be document categories
 enum ClassSet{
 	Electronics, Medical, Politics, Religion, Sports
 }
@@ -28,17 +29,18 @@ public class NaiveBayesTrainer{
 	int getDocumentClass(String docPath){
 		if(!avoidWordsInitialized){
 			DataInputReader awr = new AvoidWordReaderConcrete();
-			String toAvoid[] = awr.getDataFrom("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/wordsToAvoid.txt");
+			//Initialize words to avoid set for bag of words representation of document
+			String toAvoid[] = awr.getDataFrom("__PATH__/wordsToAvoid.txt");
 			for(int i=0; i<toAvoid.length; i++)
 				avoidWords.add(toAvoid[i]);
 			avoidWordsInitialized = true;
 		}
-		if(!trainingSetCreated){	
+		if(!trainingSetCreated){
+			//create Naive bayes' model using training set
 			wordCountMap = createWordCountMap(pathList);
 			trainingSetCreated = true;
 			vocabularySize = wordCountMap.size();
 		}
-		//System.out.println(wordCountKeeper[0]+" "+wordCountKeeper[1]+" "+vocabularySize);
 		return getClass(docPath);
 	}
 	
@@ -47,7 +49,6 @@ public class NaiveBayesTrainer{
 		DataInputReader d = new InputReaderConcrete();
 		String words[] = d.getDataFrom(path);
 		for(int j=0; j<words.length; j++){
-			//System.out.println(words[j]);
 			String curr = wordCleaner(words[j]);
 			if(curr.length()>0 && !avoidWords.contains(curr)){
 				if(!docCountMap.containsKey(curr))
@@ -58,7 +59,6 @@ public class NaiveBayesTrainer{
 				}
 			}
 		}
-		//System.out.println("Size "+docCountMap.size());
 		return calcProbabilities(totalClasses,docCountMap);
 	}
 	
@@ -68,10 +68,8 @@ public class NaiveBayesTrainer{
 		for(int i=0; i<totalClasses; i++){
 			int totalWordsInClass = wordCountKeeper[i];
 			int denominator = totalWordsInClass+vocabularySize;
-			//System.out.println("Denom "+i+" "+denominator);
 			Set<String> s = docCountMap.keySet();
 			Iterator<String> itr = s.iterator();
-			//double docClassProb = 1.0;
 			BigDecimal bg1 = new BigDecimal(1.0);
 			while(itr.hasNext()){
 				String key = itr.next();
@@ -81,16 +79,10 @@ public class NaiveBayesTrainer{
 					currDocWordCount=1;
 				else
 					currDocWordCount = tempL.get(i)+1;
-				//System.out.println("class "+i+" word "+key+" count "+currDocWordCount);
 				double probWord = (currDocWordCount)/(1.0 * denominator);
-				//System.out.print("num "+(currDocWordCount));
 				BigDecimal bg2 = new BigDecimal(probWord);
-				//docClassProb *= probWord;
 				bg1 = bg1.multiply(bg2);
 			}
-			//System.out.println();
-			//System.out.println("class " + i + " " + bg1);
-			//docClassProb *= classPriorProb[i];
 			bg1 = bg1.multiply(new BigDecimal(classPriorProb[i]));
 			if(bg1.compareTo(max) > 0){
 				max = bg1;
@@ -180,7 +172,6 @@ public class NaiveBayesTrainer{
 		while(itr.hasNext()){
 			String key = itr.next();
 			List<Integer> l = wordCountMap.get(key);
-			//System.out.println(key + " " + l);
 		}
 	}
 	
@@ -218,37 +209,36 @@ public class NaiveBayesTrainer{
 	}
 	
 	public static void  main(String args[]){
+		//For training data set
 		List<String> pathList = new ArrayList<String>();
-		pathList.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-train/Electronics");
-		pathList.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-train/Medical");
-		pathList.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-train/Politics");
-		pathList.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-train/Religion");
-		pathList.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-train/Sports");
+		pathList.add("__PATH__/Electronics");
+		pathList.add("__PATH__/Medical");
+		pathList.add("__PATH__/Politics");
+		pathList.add("__PATH__/Religion");
+		pathList.add("__PATH__/Sports");
 		//For test data set
 		List<String> pathListTest = new ArrayList<String>();
-		pathListTest.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/Electronics");
-		pathListTest.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/Medical");
-		pathListTest.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/Politics");
-		pathListTest.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/Religion");
-		pathListTest.add("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/Sports");
-		System.out.println("Using training data to create the Naive Bayes' Model. Please wait for a moment...");
-		NaiveBayesTrainer obj = new NaiveBayesTrainer(pathList,5);
-		System.out.println("Model created!");
-		System.out.println("Checking the accuracy of model using test data set. Please wait again...");
+		pathListTest.add("__PATH__/Electronics");
+		pathListTest.add("__PATH__/Medical");
+		pathListTest.add("__PATH__/Politics");
+		pathListTest.add("__PATH__/Religion");
+		pathListTest.add("__PATH__/Sports");
+		System.out.println("Initializing trainer!");
+		NaiveBayesTrainer obj = new NaiveBayesTrainer(pathList,5);// 5 = number of classes
+		System.out.println("Creating training model and checking the accuracy of model using training and test data set. Please wait for a moment...");
 		obj.checkFortestData(pathListTest);
-		//System.out.println(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dataset/20news-bydate-test/talk.politics.guns/54464"));
 		System.out.println("Categorization of sample text");
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Electronics.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Medical.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Politics.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Religion.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Sports.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Electronics.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Medical.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Politics.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Religion.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Sports.txt")));
 		System.out.println("Today's NY times news articles");
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Sports2.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Politics1.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Medical1.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Politics2.txt")));
-		System.out.println(obj.getClassName(obj.getDocumentClass("C:/Users/saviour/Documents/karanStudy/MSStuff/Sem4/NLP/Project/Dummy/Religion1.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Sports2.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Politics1.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Medical1.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Politics2.txt")));
+		System.out.println(obj.getClassName(obj.getDocumentClass("__PATH__/Religion1.txt")));
 		
 	}
 }
