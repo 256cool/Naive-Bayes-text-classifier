@@ -7,7 +7,7 @@ enum ClassSet{
 The "enum ClassSet" in source code is just given for readers to understand that the document categories can be of these types. This enum type is not used in code instead a switch-case is used to convert int to string which maps number with document class name.
 
 In main method create an arraylist as below
-   < List\<String> pathList = new ArrayList\<String>();
+   < List\<String\> pathList = new ArrayList\<String\>();
 		pathList.add("__Path__/20news-bydate-train/Electronics");
 		pathList.add("__Path__/20news-bydate-train/Medical");
 		pathList.add("__Path__/20news-bydate-train/Politics");
