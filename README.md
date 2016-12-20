@@ -1,9 +1,11 @@
 # Naive-Bayes-text-classifier
 Bag of words approach is used to represent the document...
 
+```
 enum ClassSet{
 	Electronics, Medical, Politics, Religion, Sports
 } 
+```
 The "enum ClassSet" in source code is just given for readers to understand that the document categories can be of these types. This enum type is not used in code instead a switch-case is used to convert int to string which maps number with document class name.
 
 In main method create an arraylist as below
